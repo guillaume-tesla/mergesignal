@@ -1,0 +1,189 @@
+{
+  "assets": [
+    {
+      "contentType": "image/png",
+      "id": "b5376c7953972b60",
+      "kind": "image",
+      "name": "mentlio-logo-light-CJ1L0t_X.png",
+      "path": "/var/folders/vd/xtwlclkx0v5b8gxsm_694vg80000gn/T/browser-use/assets/711cf410-62f5-4bef-be9d-5cae959310b1/b5376c7953972b60.png",
+      "url": "https://www.mentlio.com/assets/mentlio-logo-light-CJ1L0t_X.png"
+    },
+    {
+      "contentType": "image/png",
+      "id": "3d59261e0cd9c386",
+      "kind": "image",
+      "name": "mentlio-logo-C0kROnh-.png",
+      "path": "/var/folders/vd/xtwlclkx0v5b8gxsm_694vg80000gn/T/browser-use/assets/711cf410-62f5-4bef-be9d-5cae959310b1/3d59261e0cd9c386.png",
+      "url": "https://www.mentlio.com/assets/mentlio-logo-C0kROnh-.png"
+    },
+    {
+      "contentType": "image/png",
+      "id": "2cfabcd70ddf206b",
+      "kind": "image",
+      "name": "landing-hero-overview-B7-sZ5QJ.png",
+      "path": "/var/folders/vd/xtwlclkx0v5b8gxsm_694vg80000gn/T/browser-use/assets/711cf410-62f5-4bef-be9d-5cae959310b1/2cfabcd70ddf206b.png",
+      "url": "https://www.mentlio.com/assets/landing-hero-overview-B7-sZ5QJ.png"
+    },
+    {
+      "contentType": "image/svg+xml",
+      "id": "e45bff2d853216b2",
+      "kind": "image",
+      "name": "yc-logo.svg",
+      "path": "/var/folders/vd/xtwlclkx0v5b8gxsm_694vg80000gn/T/browser-use/assets/711cf410-62f5-4bef-be9d-5cae959310b1/e45bff2d853216b2.svg",
+      "url": "https://www.mentlio.com/yc-logo.svg"
+    },
+    {
+      "contentType": "image/png",
+      "id": "4147dd85d08adc5b",
+      "kind": "image",
+      "name": "slack-logo-DgSaAN8c.png",
+      "path": "/var/folders/vd/xtwlclkx0v5b8gxsm_694vg80000gn/T/browser-use/assets/711cf410-62f5-4bef-be9d-5cae959310b1/4147dd85d08adc5b.png",
+      "url": "https://www.mentlio.com/assets/slack-logo-DgSaAN8c.png"
+    },
+    {
+      "contentType": "image/png",
+      "id": "52dfc1c79d114ff7",
+      "kind": "image",
+      "name": "mentlio-icon-light-Bm9Ssvra.png",
+      "path": "/var/folders/vd/xtwlclkx0v5b8gxsm_694vg80000gn/T/browser-use/assets/711cf410-62f5-4bef-be9d-5cae959310b1/52dfc1c79d114ff7.png",
+      "url": "https://www.mentlio.com/assets/mentlio-icon-light-Bm9Ssvra.png"
+    },
+    {
+      "contentType": "image/png",
+      "id": "c43f4513e4d6e12a",
+      "kind": "image",
+      "name": "teams-logo-CtvAQ2Ci.png",
+      "path": "/var/folders/vd/xtwlclkx0v5b8gxsm_694vg80000gn/T/browser-use/assets/711cf410-62f5-4bef-be9d-5cae959310b1/c43f4513e4d6e12a.png",
+      "url": "https://www.mentlio.com/assets/teams-logo-CtvAQ2Ci.png"
+    },
+    {
+      "contentType": "image/png",
+      "id": "5596cd940193b232",
+      "kind": "image",
+      "name": "github-logo-D1li2H7s.png",
+      "path": "/var/folders/vd/xtwlclkx0v5b8gxsm_694vg80000gn/T/browser-use/assets/711cf410-62f5-4bef-be9d-5cae959310b1/5596cd940193b232.png",
+      "url": "https://www.mentlio.com/assets/github-logo-D1li2H7s.png"
+    },
+    {
+      "contentType": "image/png",
+      "id": "1ea4578849bd5ff1",
+      "kind": "image",
+      "name": "claude-icon.png",
+      "path": "/var/folders/vd/xtwlclkx0v5b8gxsm_694vg80000gn/T/browser-use/assets/711cf410-62f5-4bef-be9d-5cae959310b1/1ea4578849bd5ff1.png",
+      "url": "https://www.mentlio.com/claude-icon.png"
+    },
+    {
+      "contentType": "image/png",
+      "id": "174f9bf56dd50155",
+      "kind": "image",
+      "name": "openai-icon.png",
+      "path": "/var/folders/vd/xtwlclkx0v5b8gxsm_694vg80000gn/T/browser-use/assets/711cf410-62f5-4bef-be9d-5cae959310b1/174f9bf56dd50155.png",
+      "url": "https://www.mentlio.com/openai-icon.png"
+    },
+    {
+      "contentType": "image/png",
+      "id": "10acef434df3b311",
+      "kind": "image",
+      "name": "jira-icon.png",
+      "path": "/var/folders/vd/xtwlclkx0v5b8gxsm_694vg80000gn/T/browser-use/assets/711cf410-62f5-4bef-be9d-5cae959310b1/10acef434df3b311.png",
+      "url": "https://www.mentlio.com/jira-icon.png"
+    },
+    {
+      "contentType": "image/png",
+      "id": "e8e93ea820b9d5d7",
+      "kind": "image",
+      "name": "cursor-icon.png",
+      "path": "/var/folders/vd/xtwlclkx0v5b8gxsm_694vg80000gn/T/browser-use/assets/711cf410-62f5-4bef-be9d-5cae959310b1/e8e93ea820b9d5d7.png",
+      "url": "https://www.mentlio.com/cursor-icon.png"
+    },
+    {
+      "contentType": "image/png",
+      "id": "517e9514edcc16f2",
+      "kind": "image",
+      "name": "linear-icon.png",
+      "path": "/var/folders/vd/xtwlclkx0v5b8gxsm_694vg80000gn/T/browser-use/assets/711cf410-62f5-4bef-be9d-5cae959310b1/517e9514edcc16f2.png",
+      "url": "https://www.mentlio.com/linear-icon.png"
+    },
+    {
+      "contentType": "image/png",
+      "id": "967e4917154144a6",
+      "kind": "image",
+      "name": "mentlio-icon.png",
+      "path": "/var/folders/vd/xtwlclkx0v5b8gxsm_694vg80000gn/T/browser-use/assets/711cf410-62f5-4bef-be9d-5cae959310b1/967e4917154144a6.png",
+      "url": "https://www.mentlio.com/mentlio-icon.png"
+    },
+    {
+      "contentType": "image/png",
+      "id": "59ba33977acccbd9",
+      "kind": "image",
+      "name": "landing-hero-productivity-DCfpsDPm.png",
+      "path": "/var/folders/vd/xtwlclkx0v5b8gxsm_694vg80000gn/T/browser-use/assets/711cf410-62f5-4bef-be9d-5cae959310b1/59ba33977acccbd9.png",
+      "url": "https://www.mentlio.com/assets/landing-hero-productivity-DCfpsDPm.png"
+    },
+    {
+      "contentType": "image/png",
+      "id": "0d21bcd7ab9ac4f6",
+      "kind": "image",
+      "name": "landing-hero-leaderboard-C7Q6h-1V.png",
+      "path": "/var/folders/vd/xtwlclkx0v5b8gxsm_694vg80000gn/T/browser-use/assets/711cf410-62f5-4bef-be9d-5cae959310b1/0d21bcd7ab9ac4f6.png",
+      "url": "https://www.mentlio.com/assets/landing-hero-leaderboard-C7Q6h-1V.png"
+    },
+    {
+      "contentType": "image/png",
+      "id": "cbfd4d3fe1ad21f4",
+      "kind": "image",
+      "name": "landing-hero-savings-CuOxnunU.png",
+      "path": "/var/folders/vd/xtwlclkx0v5b8gxsm_694vg80000gn/T/browser-use/assets/711cf410-62f5-4bef-be9d-5cae959310b1/cbfd4d3fe1ad21f4.png",
+      "url": "https://www.mentlio.com/assets/landing-hero-savings-CuOxnunU.png"
+    },
+    {
+      "contentType": "image/svg+xml",
+      "id": "c12fccb23618ffa6",
+      "kind": "image",
+      "name": "svg-1",
+      "path": "/var/folders/vd/xtwlclkx0v5b8gxsm_694vg80000gn/T/browser-use/assets/711cf410-62f5-4bef-be9d-5cae959310b1/c12fccb23618ffa6.svg",
+      "url": "inline-svg:c12fccb23618ffa6"
+    },
+    {
+      "contentType": "image/svg+xml",
+      "id": "db2af1896d05f56f",
+      "kind": "image",
+      "name": "svg-2",
+      "path": "/var/folders/vd/xtwlclkx0v5b8gxsm_694vg80000gn/T/browser-use/assets/711cf410-62f5-4bef-be9d-5cae959310b1/db2af1896d05f56f.svg",
+      "url": "inline-svg:db2af1896d05f56f"
+    },
+    {
+      "contentType": "image/svg+xml",
+      "id": "5aa67783e946e20b",
+      "kind": "image",
+      "name": "svg-3",
+      "path": "/var/folders/vd/xtwlclkx0v5b8gxsm_694vg80000gn/T/browser-use/assets/711cf410-62f5-4bef-be9d-5cae959310b1/5aa67783e946e20b.svg",
+      "url": "inline-svg:5aa67783e946e20b"
+    },
+    {
+      "contentType": "image/svg+xml",
+      "id": "f8dd858f46bc7478",
+      "kind": "image",
+      "name": "svg-4",
+      "path": "/var/folders/vd/xtwlclkx0v5b8gxsm_694vg80000gn/T/browser-use/assets/711cf410-62f5-4bef-be9d-5cae959310b1/f8dd858f46bc7478.svg",
+      "url": "inline-svg:f8dd858f46bc7478"
+    },
+    {
+      "contentType": "image/svg+xml",
+      "id": "42a02cfbe3e4e52a",
+      "kind": "image",
+      "name": "svg-5",
+      "path": "/var/folders/vd/xtwlclkx0v5b8gxsm_694vg80000gn/T/browser-use/assets/711cf410-62f5-4bef-be9d-5cae959310b1/42a02cfbe3e4e52a.svg",
+      "url": "inline-svg:42a02cfbe3e4e52a"
+    },
+    {
+      "contentType": "image/svg+xml",
+      "id": "e6f9cffc758735b7",
+      "kind": "image",
+      "name": "svg-6",
+      "path": "/var/folders/vd/xtwlclkx0v5b8gxsm_694vg80000gn/T/browser-use/assets/711cf410-62f5-4bef-be9d-5cae959310b1/e6f9cffc758735b7.svg",
+      "url": "inline-svg:e6f9cffc758735b7"
+    }
+  ],
+  "failures": []
+}
