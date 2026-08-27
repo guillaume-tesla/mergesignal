@@ -2,46 +2,22 @@
 
 import { Ban, Check, Database, EyeOff, LockKeyhole, Save, ShieldCheck, Users } from 'lucide-react';
 import { useState, useSyncExternalStore } from 'react';
-
-const KEY = 'mergesignal:privacy:v1';
-const CHANGE_EVENT = 'mergesignal:privacy-change';
-type PrivacyPreferences = { retention: '30' | '60' | '90'; cohort: '5' | '8' | '10' };
-const defaults: PrivacyPreferences = { retention: '30', cohort: '5' };
-
-function parsePreferences(raw: string): PrivacyPreferences {
-  try {
-    const value = JSON.parse(raw || 'null') as (Partial<PrivacyPreferences> & { version?: number }) | null;
-    if (!value || value.version !== 1) return defaults;
-    const retention = ['30', '60', '90'].includes(value.retention ?? '') ? value.retention as PrivacyPreferences['retention'] : defaults.retention;
-    const cohort = ['5', '8', '10'].includes(value.cohort ?? '') ? value.cohort as PrivacyPreferences['cohort'] : defaults.cohort;
-    return { retention, cohort };
-  } catch { return defaults; }
-}
-
-function privacySnapshot() {
-  try { return window.localStorage.getItem(KEY) ?? ''; } catch { return ''; }
-}
-
-function subscribePrivacy(onChange: () => void) {
-  window.addEventListener('storage', onChange);
-  window.addEventListener(CHANGE_EVENT, onChange);
-  return () => {
-    window.removeEventListener('storage', onChange);
-    window.removeEventListener(CHANGE_EVENT, onChange);
-  };
-}
+import {
+  emptyWorkspaceSnapshot,
+  parsePrivacyPreferences,
+  privacySnapshot,
+  subscribePrivacy,
+  type PrivacyPreferences,
+  writePrivacyPreferences,
+} from '../lib/workspace-preferences';
 
 export function PrivacyControls() {
-  const stored = useSyncExternalStore(subscribePrivacy, privacySnapshot, () => '');
-  const preferences = parsePreferences(stored);
+  const stored = useSyncExternalStore(subscribePrivacy, privacySnapshot, emptyWorkspaceSnapshot);
+  const preferences = parsePrivacyPreferences(stored);
   const [saved, setSaved] = useState(true);
 
   const update = (next: PrivacyPreferences) => {
-    try {
-      window.localStorage.setItem(KEY, JSON.stringify({ version: 1, ...next }));
-      window.dispatchEvent(new Event(CHANGE_EVENT));
-      setSaved(true);
-    } catch { setSaved(false); }
+    setSaved(writePrivacyPreferences(next));
   };
 
   return (

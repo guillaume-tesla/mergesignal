@@ -53,10 +53,10 @@ export function getSummary(dataset: DemoDataset, filters: Filters): Summary {
   };
 }
 
-export function isCohortVisible(memberCount: number): boolean {
-  return memberCount >= 5;
+export function isCohortVisible(memberCount: number, minimumCohortSize = 5): boolean {
+  return memberCount >= minimumCohortSize;
 }
 
-export function isAggregateVisible(summary: Summary): boolean {
-  return summary.assistedPrs === 0 || isCohortVisible(summary.activeEngineers);
+export function isAggregateVisible(summary: Summary, minimumCohortSize = 5): boolean {
+  return summary.assistedPrs > 0 && isCohortVisible(summary.activeEngineers, minimumCohortSize);
 }

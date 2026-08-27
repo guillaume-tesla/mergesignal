@@ -9,7 +9,7 @@ Browser
   ├─ deterministic fictional dataset
   ├─ pure analytics and Ask selectors
   ├─ local CSV/JSON parser
-  ├─ namespaced experiment/privacy storage
+  ├─ namespaced experiment/filter/privacy storage
   └─ client-generated aggregate export
 ```
 
@@ -30,7 +30,7 @@ There is no application database, authentication service, model call, telemetry 
 1. The import schema accepts only date, team, tool, workflow, spend, assisted pull-request count, estimated net hours, cycle/review hours, rework rate, and change-failure rate.
 2. Unknown, sensitive, nested, prototype-related, oversized, invalid, and formula-like values are rejected before preview.
 3. Import parsing has a 2 MB and 5,000-row ceiling and makes no network request.
-4. Aggregate UI, Ask, and export paths suppress active cohorts below five.
+4. Aggregate UI, Ask, and export paths enforce the persisted 5/8/10-person workspace floor; exhaustive tool partitions are suppressed as a whole when any non-empty child is protected.
 5. Export repeats the guard at its own boundary, so a caller cannot bypass a disabled button.
 6. Stored experiments have a schema version, size/date/status validation, a 100-record ceiling, and duplicate-ID rejection.
 7. Individual rankings are not part of the data model or navigation.

@@ -44,34 +44,72 @@ function baseEvidence(recordCount: number): AskEvidence {
   };
 }
 
+function opportunityMatchesFilters(
+  opportunityFilters: Partial<Filters>,
+  filters: Filters,
+) {
+  return (filters.team === 'all' || !opportunityFilters.team || opportunityFilters.team === filters.team)
+    && (filters.tool === 'all' || !opportunityFilters.tool || opportunityFilters.tool === filters.tool)
+    && (filters.workflow === 'all' || !opportunityFilters.workflow || opportunityFilters.workflow === filters.workflow);
+}
+
 export function answerAnalyticsQuestion(
   question: string,
   dataset: DemoDataset,
   filters: Filters,
+  minimumCohortSize = 5,
 ): AskResult {
   const normalized = question.trim().toLowerCase();
   const summary = getSummary(dataset, filters);
   const scope = scopeLabel(filters);
 
-  if (!isAggregateVisible(summary)) {
+  if (summary.assistedPrs === 0) {
+    return {
+      status: 'answered',
+      answer: 'No records match the selected view. Try a longer period or broaden a team, tool, or workflow filter.',
+      evidence: [],
+      scope,
+    };
+  }
+
+  if (!isAggregateVisible(summary, minimumCohortSize)) {
+    const minimumLabel = minimumCohortSize === 5 ? 'five' : String(minimumCohortSize);
     return {
       status: 'suppressed',
-      answer: 'This answer is hidden because the selected view does not meet the minimum cohort of five active people.',
+      answer: `This answer is hidden because the selected view does not meet the minimum cohort of ${minimumLabel} active people.`,
       evidence: [],
       scope,
     };
   }
 
   if (/\b(tool|cursor|claude|copilot)\b/.test(normalized) && /\b(net|capacity|hours?|best|most)\b/.test(normalized)) {
-    const toolResults = TOOL_NAMES.map((tool) => ({
+    const tools = filters.tool === 'all' ? TOOL_NAMES : [filters.tool];
+    const toolResults = tools.map((tool) => ({
       tool,
       summary: getSummary(dataset, { ...filters, tool }),
-    })).sort((left, right) => right.summary.netHours - left.summary.netHours);
-    const winner = toolResults[0];
+    })).filter(({ summary: toolSummary }) => toolSummary.assistedPrs > 0);
+    const protectedChild = toolResults.some(
+      ({ summary: toolSummary }) => !isAggregateVisible(toolSummary, minimumCohortSize),
+    );
+
+    if (protectedChild) {
+      const minimumLabel = minimumCohortSize === 5 ? 'five' : String(minimumCohortSize);
+      return {
+        status: 'suppressed',
+        answer: `The entire tool comparison is hidden because at least one non-empty tool cohort does not meet the minimum cohort of ${minimumLabel} active people. Whole-breakdown suppression prevents protected values from being derived by subtraction.`,
+        evidence: [],
+        scope,
+      };
+    }
+
+    const sortedToolResults = toolResults.sort(
+      (left, right) => right.summary.netHours - left.summary.netHours,
+    );
+    const winner = sortedToolResults[0];
     return {
       status: 'answered',
-      answer: `${winner.tool} has the highest estimated net capacity in this view at ${number(winner.summary.netHours, 'h')}. This is an observed association in the demo records, not proof that the tool caused the gain.`,
-      evidence: toolResults.map(({ tool, summary: toolSummary }) => ({
+      answer: `${winner.tool} has the highest estimated net capacity among tool cohorts meeting the privacy floor at ${number(winner.summary.netHours, 'h')}. This is an observed association in the demo records, not proof that the tool caused the gain.`,
+      evidence: sortedToolResults.map(({ tool, summary: toolSummary }) => ({
         label: tool,
         value: `${number(toolSummary.netHours, 'h')} across ${toolSummary.assistedPrs} pull requests`,
         source: 'Filtered tool-level delivery records',
@@ -135,15 +173,25 @@ export function answerAnalyticsQuestion(
     /\b(opportunity|opportunities|recommendation|recommendations)\b/.test(normalized) ||
     /\b(what|which)\b.*\b(scale|fix|stop|next move)\b/.test(normalized)
   ) {
-    const opportunity = dataset.opportunities[0];
+    const opportunity = dataset.opportunities.find((item) => (
+      opportunityMatchesFilters(item.filters, filters)
+    ));
+    if (!opportunity) {
+      return {
+        status: 'unsupported',
+        answer: 'No opportunity receipt is compatible with the selected dimensions. Broaden the filters to inspect the workspace opportunity queue.',
+        evidence: [],
+        scope,
+      };
+    }
     return {
       status: 'answered',
-      answer: `The highest-confidence next move is to ${opportunity.title.toLowerCase()}. Review its evidence receipt and caveats before launching the 14-day experiment.`,
+      answer: `From the workspace opportunity queue, the highest-confidence compatible next move is to ${opportunity.title.toLowerCase()}. Review its own evidence window and caveats before launching the 14-day experiment.`,
       evidence: [
         { label: opportunity.impactLabel, value: opportunity.impact, source: `${opportunity.sampleSize} matched demo pull requests` },
         { label: 'Confidence', value: opportunity.confidence, source: opportunity.method },
       ],
-      scope,
+      scope: 'Workspace opportunity queue · receipts use their own evidence windows',
     };
   }
 

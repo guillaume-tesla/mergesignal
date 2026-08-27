@@ -150,4 +150,16 @@ describe('leadership export', () => {
       format: 'csv',
     })).toThrowError(/minimum cohort of five/i);
   });
+
+  it('honors a configured export cohort floor above the product default', () => {
+    const summary = getSummary(demoDataset, { ...filters, team: 'Frontend' });
+
+    expect(() => createLeadershipExport({
+      organization: demoDataset.organization,
+      filters: { ...filters, team: 'Frontend' },
+      summary,
+      format: 'json',
+      minimumCohortSize: 10,
+    })).toThrowError(/minimum cohort of 10/i);
+  });
 });

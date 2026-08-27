@@ -10,13 +10,13 @@ This repository contains an original, clean-room competitor inspired by the engi
 
 - A conversion-focused landing page with original positioning, transparent pricing, privacy commitments, FAQ, metadata, and social preview.
 - A no-login fictional Northstar Cloud workspace with deterministic spend, adoption, delivery, review, and quality measures.
-- Period, team, tool, and workflow filters with reset and protected small-cohort states.
+- Persistent period, team, tool, and workflow filters with reset and protected small-cohort states shared by Overview and Ask.
 - Evidence receipts showing sample size, matched comparison, confidence, caveats, and a reversible next action.
 - Persistent 14-day experiments whose target and status survive reloads.
-- Deterministic Ask analytics with record citations and an honest unsupported-question state.
+- Deterministic Ask analytics from the current workspace filters with record citations, privacy-policy enforcement, and an honest unsupported-question state.
 - Local-only CSV/JSON preview with an allowlisted schema, input limits, formula-injection protection, and rejection of prompts, source code, diffs, paths, and outputs.
-- Safe aggregate CSV/JSON exports with minimum-cohort enforcement at the export boundary.
-- Honest integration previews and persistent privacy-policy controls; no fake OAuth connections.
+- Safe aggregate CSV/JSON exports with the configured minimum-cohort policy enforced again at the export boundary.
+- Honest integration previews and persistent 5/8/10-person privacy-policy controls; protected exhaustive breakdowns cannot be reconstructed from visible sibling rows.
 - Responsive navigation, reduced-motion support, keyboard focus, semantic chart summaries, and automated WCAG checks.
 
 ![MergeSignal overview](research/screenshots/mergesignal-app-overview-desktop.png)
@@ -45,7 +45,7 @@ npm run audit
 npm run e2e
 ```
 
-The test suite covers domain calculations, cohort suppression, Ask routing, import/export security, local persistence, component behavior, nine end-to-end decision journeys, nine route-level accessibility audits, and desktop/tablet/mobile screenshots.
+The test suite covers domain calculations, configurable and complementary cohort suppression, Ask routing, import/export security, local persistence, component behavior, nine end-to-end decision journeys, nine route-level accessibility audits, and desktop/tablet/mobile screenshots.
 
 ## Product routes
 

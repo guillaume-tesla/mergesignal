@@ -31,6 +31,15 @@ test('landing to filtered overview decision loop', async ({ page }) => {
 
   await page.getByLabel('Team').selectOption('Frontend');
   await expect(page.getByText('9 / 14')).toBeVisible();
+  await page.getByRole('link', { name: 'Ask about this data' }).click();
+  await page.waitForLoadState('networkidle');
+  await expect(page.getByRole('heading', { name: /northstar cloud.*frontend/i })).toBeVisible();
+  await page.getByLabel('Ask a question about rollout data').fill('How much did we spend?');
+  await page.getByRole('button', { name: 'Answer from records' }).click();
+  await expect(page.getByText(/observed ai spend is \$2,410/i)).toBeVisible();
+  await page.goto('/app');
+  await page.waitForLoadState('networkidle');
+  await expect(page.getByText('9 / 14')).toBeVisible();
   await page.getByRole('button', { name: 'Reset filters' }).click();
   await expect(page.getByText('49 / 72')).toBeVisible();
   await page.screenshot({ path: '../research/screenshots/mergesignal-app-overview-desktop.png', fullPage: true, animations: 'disabled' });
@@ -134,6 +143,13 @@ test('privacy preferences persist and integrations remain honest previews', asyn
   await expect(page.getByLabel('Aggregate retention')).toHaveValue('90');
   await expect(page.getByLabel('Minimum cohort size')).toHaveValue('8');
   await expect(page.getByText(/individual rankings are permanently off/i)).toBeVisible();
+
+  await page.getByLabel('Minimum cohort size').selectOption('10');
+  await page.goto('/app');
+  await page.waitForLoadState('networkidle');
+  await page.getByLabel('Team').selectOption('Frontend');
+  await expect(page.getByRole('heading', { name: 'Protected small cohort' })).toBeVisible();
+  await expect(page.getByRole('button', { name: 'Export CSV' })).toBeDisabled();
 
   await page.goto('/app/integrations');
   await expect(page.getByText(/illustrative and disconnected/i)).toBeVisible();

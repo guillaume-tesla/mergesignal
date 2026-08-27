@@ -43,6 +43,22 @@ describe('demo analytics', () => {
   it('suppresses cohorts smaller than five people', () => {
     expect(isCohortVisible(4)).toBe(false);
     expect(isCohortVisible(5)).toBe(true);
+    expect(isCohortVisible(7, 8)).toBe(false);
+    expect(isCohortVisible(8, 8)).toBe(true);
+    expect(isCohortVisible(9, 10)).toBe(false);
+    expect(isCohortVisible(10, 10)).toBe(true);
+    expect(isAggregateVisible({
+      spend: 0,
+      activeEngineers: 0,
+      totalEngineers: 72,
+      assistedPrs: 0,
+      netHours: 0,
+      cycleHours: 0,
+      reviewHours: 0,
+      reworkRate: 0,
+      changeFailureRate: 0,
+      savingsOpportunity: 0,
+    })).toBe(false);
   });
 
   it('enforces cohort suppression for every filter combination at the four/five boundary', () => {

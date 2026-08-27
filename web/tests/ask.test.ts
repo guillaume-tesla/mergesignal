@@ -73,4 +73,83 @@ describe('deterministic Ask', () => {
     expect(result.answer).toMatch(/minimum cohort of five/i);
     expect(result.evidence).toEqual([]);
   });
+
+  it('honors a stricter configured cohort floor', () => {
+    const result = answerAnalyticsQuestion(
+      'How much did we spend?',
+      demoDataset,
+      { ...filters, team: 'Frontend' },
+      10,
+    );
+
+    expect(result.status).toBe('suppressed');
+    expect(result.answer).toMatch(/minimum cohort of 10/i);
+  });
+
+  it('does not reveal roster totals when no records match', () => {
+    const result = answerAnalyticsQuestion(
+      'How many engineers are active?',
+      { ...demoDataset, records: [] },
+      filters,
+    );
+
+    expect(result.status).toBe('answered');
+    expect(result.answer).toMatch(/no records match/i);
+    expect(result.answer).not.toContain('72');
+    expect(result.evidence).toEqual([]);
+  });
+
+  it('suppresses an exhaustive tool breakdown when one child cohort is protected', () => {
+    const engineers = demoDataset.engineers.slice(0, 9).map((engineer) => ({
+      ...engineer,
+      team: 'Frontend' as const,
+    }));
+    const records = engineers.map((engineer, index) => ({
+      ...demoDataset.records[index],
+      id: `privacy-boundary-${index}`,
+      engineerId: engineer.id,
+      team: 'Frontend' as const,
+      tool: index < 5 ? 'Cursor' as const : 'Claude Code' as const,
+    }));
+    const boundaryDataset: DemoDataset = {
+      ...demoDataset,
+      teams: [{ name: 'Frontend', size: 9 }],
+      engineers,
+      records,
+    };
+
+    const result = answerAnalyticsQuestion(
+      'Which tool has the most net capacity?',
+      boundaryDataset,
+      filters,
+    );
+
+    expect(result.status).toBe('suppressed');
+    expect(result.answer).toMatch(/entire tool comparison/i);
+    expect(result.evidence).toEqual([]);
+  });
+
+  it('never escapes a selected-tool scope to compare sibling tools', () => {
+    const result = answerAnalyticsQuestion(
+      'Which tool has the most net capacity?',
+      demoDataset,
+      { ...filters, tool: 'Cursor' },
+    );
+
+    expect(result.status).toBe('answered');
+    expect(result.scope).toContain('Cursor');
+    expect(result.evidence.map((item) => item.label)).toEqual(['Cursor']);
+  });
+
+  it('labels static recommendations as workspace queue evidence', () => {
+    const result = answerAnalyticsQuestion(
+      'What should we scale, fix, or stop?',
+      demoDataset,
+      { ...filters, period: '7d', team: 'Data' },
+    );
+
+    expect(result.status).toBe('answered');
+    expect(result.scope).toMatch(/workspace opportunity queue/i);
+    expect(result.answer).toMatch(/reclaim seven inactive seats/i);
+  });
 });

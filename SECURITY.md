@@ -8,11 +8,11 @@ MergeSignal is a local-first fictional product demonstration. It has no login, p
 
 The local preview accepts only aggregate telemetry fields documented in the product. Prompt text, source code, diffs, patches, paths, terminal/command output, and model output are rejected. Unknown and nested JSON fields, spreadsheet formulas, invalid ranges, oversized input, and dangerous prototype-related keys fail closed.
 
-Imported text is parsed inside the browser. The application does not upload it. Exports contain only aggregate summaries, are formula-neutralized, and are refused for cohorts below five active people.
+Imported text is parsed inside the browser. The application does not upload it. Exports contain only aggregate summaries, are formula-neutralized, and are refused below the workspace's configured 5/8/10-person cohort floor. Exhaustive tool breakdowns are hidden as a whole when any non-empty child cohort is protected, preventing subtraction from exposing the hidden value.
 
 ## Browser storage
 
-Experiments and privacy preferences use namespaced local-storage keys. Stored experiment data is schema-versioned and validated for types, lengths, dates, status, duplicate IDs, and count before use. Reset actions remove only MergeSignal-owned state.
+Experiments, filters, and privacy preferences use namespaced local-storage keys. Stored data is schema-versioned and validated against bounded values before use; experiment data is additionally checked for types, lengths, dates, status, duplicate IDs, and count. Reset actions remove only MergeSignal-owned state.
 
 ## Reporting a vulnerability
 

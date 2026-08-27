@@ -1,12 +1,20 @@
 'use client';
 
 import { ArrowRight, BotMessageSquare, Database, Info, Quote, ShieldCheck, Sparkles } from 'lucide-react';
-import { FormEvent, useState } from 'react';
+import { FormEvent, useMemo, useState, useSyncExternalStore } from 'react';
 import { answerAnalyticsQuestion, type AskResult } from '../lib/ask';
 import { demoDataset } from '../lib/demo-data';
-import type { Filters } from '../lib/types';
-
-const filters: Filters = { period: '28d', team: 'all', tool: 'all', workflow: 'all' };
+import {
+  emptyWorkspaceSnapshot,
+  filterScopeHeading,
+  filtersSnapshot,
+  minimumCohortSize,
+  parseFilters,
+  parsePrivacyPreferences,
+  privacySnapshot,
+  subscribeFilters,
+  subscribePrivacy,
+} from '../lib/workspace-preferences';
 const suggestions = [
   'Which tool has the most net capacity?',
   'How much did we spend on AI this period?',
@@ -15,12 +23,33 @@ const suggestions = [
 ];
 
 export function AskPanel() {
+  const storedFilters = useSyncExternalStore(
+    subscribeFilters,
+    filtersSnapshot,
+    emptyWorkspaceSnapshot,
+  );
+  const storedPrivacy = useSyncExternalStore(
+    subscribePrivacy,
+    privacySnapshot,
+    emptyWorkspaceSnapshot,
+  );
+  const filters = useMemo(() => parseFilters(storedFilters), [storedFilters]);
+  const privacyPreferences = useMemo(
+    () => parsePrivacyPreferences(storedPrivacy),
+    [storedPrivacy],
+  );
+  const minimumCohort = minimumCohortSize(privacyPreferences);
+  const scopeKey = `${storedFilters}\n${storedPrivacy}`;
   const [question, setQuestion] = useState('Which tool has the most net capacity?');
-  const [result, setResult] = useState<AskResult | null>(null);
+  const [scopedResult, setScopedResult] = useState<{ key: string; value: AskResult } | null>(null);
+  const result = scopedResult?.key === scopeKey ? scopedResult.value : null;
 
   const answer = (nextQuestion: string) => {
     setQuestion(nextQuestion);
-    setResult(answerAnalyticsQuestion(nextQuestion, demoDataset, filters));
+    setScopedResult({
+      key: scopeKey,
+      value: answerAnalyticsQuestion(nextQuestion, demoDataset, filters, minimumCohort),
+    });
   };
 
   const submit = (event: FormEvent) => {
@@ -34,7 +63,7 @@ export function AskPanel() {
       <div className="demo-context" role="note"><span><BotMessageSquare size={14} /> Deterministic analytics guide</span><span>No general-purpose AI backend. No prompts are transmitted.</span></div>
 
       <section className="ask-composer panel" aria-labelledby="ask-heading">
-        <div><p className="panel-kicker">Current scope</p><h2 id="ask-heading">Northstar Cloud · Last 28 days · All teams</h2></div>
+        <div><p className="panel-kicker">Current scope</p><h2 id="ask-heading">{filterScopeHeading(filters)}</h2></div>
         <form onSubmit={submit}>
           <label htmlFor="ask-question">Ask a question about rollout data</label>
           <div className="ask-input-row"><input id="ask-question" value={question} onChange={(event) => setQuestion(event.target.value)} placeholder="Try: Which workflow should we fix?" maxLength={180} /><button className="button-dark" type="submit" disabled={!question.trim()}>Answer from records <ArrowRight size={16} /></button></div>

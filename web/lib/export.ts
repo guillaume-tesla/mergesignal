@@ -7,6 +7,7 @@ interface LeadershipExportInput {
   filters: Filters;
   summary: Summary;
   format: ExportFormat;
+  minimumCohortSize?: number;
 }
 
 export interface LeadershipExport {
@@ -33,9 +34,11 @@ export function createLeadershipExport({
   filters,
   summary,
   format,
+  minimumCohortSize = 5,
 }: LeadershipExportInput): LeadershipExport {
-  if (summary.activeEngineers < 5) {
-    throw new Error('Exports require a minimum cohort of five active engineers.');
+  if (summary.activeEngineers < minimumCohortSize) {
+    const minimumLabel = minimumCohortSize === 5 ? 'five' : String(minimumCohortSize);
+    throw new Error(`Exports require a minimum cohort of ${minimumLabel} active engineers.`);
   }
   const filename = `mergesignal-${filters.period}-${filters.team.toLowerCase().replaceAll(' ', '-')}`;
   if (format === 'json') {

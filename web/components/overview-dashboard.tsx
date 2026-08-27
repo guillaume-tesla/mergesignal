@@ -12,7 +12,7 @@ import {
   Users,
   WalletCards,
 } from 'lucide-react';
-import { useMemo, useState } from 'react';
+import { useMemo, useSyncExternalStore } from 'react';
 import {
   filterRecords,
   getSummary,
@@ -26,13 +26,18 @@ import {
   WORKFLOW_NAMES,
   type Filters,
 } from '../lib/types';
-
-const DEFAULT_FILTERS: Filters = {
-  period: '28d',
-  team: 'all',
-  tool: 'all',
-  workflow: 'all',
-};
+import {
+  DEFAULT_FILTERS,
+  emptyWorkspaceSnapshot,
+  filtersSnapshot,
+  minimumCohortSize,
+  parseFilters,
+  parsePrivacyPreferences,
+  privacySnapshot,
+  subscribeFilters,
+  subscribePrivacy,
+  writeFilters,
+} from '../lib/workspace-preferences';
 
 function money(value: number) {
   return new Intl.NumberFormat('en-US', {
@@ -46,14 +51,15 @@ function number(value: number, maximumFractionDigits = 1) {
   return new Intl.NumberFormat('en-US', { maximumFractionDigits }).format(value);
 }
 
-function download(format: ExportFormat, filters: Filters) {
+function download(format: ExportFormat, filters: Filters, minimumCohort: number) {
   const summary = getSummary(demoDataset, filters);
-  if (!isAggregateVisible(summary)) return;
+  if (!isAggregateVisible(summary, minimumCohort) || summary.assistedPrs === 0) return;
   const file = createLeadershipExport({
     organization: demoDataset.organization,
     filters,
     summary,
     format,
+    minimumCohortSize: minimumCohort,
   });
   const url = URL.createObjectURL(new Blob([file.content], { type: file.mimeType }));
   const anchor = document.createElement('a');
@@ -89,10 +95,26 @@ function MetricCard({
 }
 
 export function OverviewDashboard() {
-  const [filters, setFilters] = useState<Filters>(DEFAULT_FILTERS);
+  const storedFilters = useSyncExternalStore(
+    subscribeFilters,
+    filtersSnapshot,
+    emptyWorkspaceSnapshot,
+  );
+  const storedPrivacy = useSyncExternalStore(
+    subscribePrivacy,
+    privacySnapshot,
+    emptyWorkspaceSnapshot,
+  );
+  const filters = useMemo(() => parseFilters(storedFilters), [storedFilters]);
+  const privacyPreferences = useMemo(
+    () => parsePrivacyPreferences(storedPrivacy),
+    [storedPrivacy],
+  );
+  const minimumCohort = minimumCohortSize(privacyPreferences);
   const summary = useMemo(() => getSummary(demoDataset, filters), [filters]);
   const records = useMemo(() => filterRecords(demoDataset, filters), [filters]);
-  const visible = isAggregateVisible(summary);
+  const visible = isAggregateVisible(summary, minimumCohort);
+  const canExport = visible && summary.assistedPrs > 0;
 
   const weeks = useMemo(() => {
     const ranges = [[1, 7], [8, 14], [15, 21], [22, 28]];
@@ -107,13 +129,21 @@ export function OverviewDashboard() {
   }, [records]);
   const maxPrs = Math.max(...weeks.map((week) => week.prs), 1);
 
-  const toolRows = TOOL_NAMES.map((tool) => ({
-    tool,
-    summary: getSummary(demoDataset, { ...filters, tool }),
-  }));
+  const tools = filters.tool === 'all' ? TOOL_NAMES : [filters.tool];
+  const toolRows = tools.map((tool) => {
+    const toolSummary = getSummary(demoDataset, { ...filters, tool });
+    return {
+      tool,
+      summary: toolSummary,
+      visible: isAggregateVisible(toolSummary, minimumCohort),
+    };
+  });
+  const toolBreakdownVisible = toolRows.every(
+    (row) => row.summary.assistedPrs === 0 || row.visible,
+  );
 
   const update = <Key extends keyof Filters>(key: Key, value: Filters[Key]) => {
-    setFilters((current) => ({ ...current, [key]: value }));
+    writeFilters({ ...filters, [key]: value });
   };
 
   return (
@@ -127,10 +157,10 @@ export function OverviewDashboard() {
           </p>
         </div>
         <div className="heading-actions">
-          <button className="button-quiet" type="button" onClick={() => download('json', filters)} disabled={!visible}>
+          <button className="button-quiet" type="button" onClick={() => download('json', filters, minimumCohort)} disabled={!canExport}>
             <Download size={15} /> JSON
           </button>
-          <button className="button-dark" type="button" onClick={() => download('csv', filters)} disabled={!visible}>
+          <button className="button-dark" type="button" onClick={() => download('csv', filters, minimumCohort)} disabled={!canExport}>
             <Download size={15} /> Export CSV
           </button>
         </div>
@@ -171,24 +201,24 @@ export function OverviewDashboard() {
             {WORKFLOW_NAMES.map((workflow) => <option key={workflow}>{workflow}</option>)}
           </select>
         </label>
-        <button className="filter-reset" type="button" onClick={() => setFilters(DEFAULT_FILTERS)}>
+        <button className="filter-reset" type="button" onClick={() => writeFilters(DEFAULT_FILTERS)}>
           <RotateCcw size={14} /> Reset filters
         </button>
       </section>
 
-      {!visible ? (
+      {summary.assistedPrs === 0 ? (
+        <section className="empty-state" aria-live="polite">
+          <h2>No records match this view</h2>
+          <p>Try a longer period or reset one of the team, tool, or workflow filters.</p>
+          <button className="button-dark" type="button" onClick={() => writeFilters(DEFAULT_FILTERS)}>Reset filters</button>
+        </section>
+      ) : !visible ? (
         <section className="suppressed-state" aria-live="polite">
           <ShieldCheck size={25} aria-hidden="true" />
           <div>
             <h2>Protected small cohort</h2>
-            <p>This view contains activity from fewer than five people. Aggregate metrics, Ask answers, and exports are hidden.</p>
+            <p>This view contains activity from fewer than {minimumCohort} people. Aggregate metrics, Ask answers, and exports are hidden.</p>
           </div>
-        </section>
-      ) : summary.assistedPrs === 0 ? (
-        <section className="empty-state" aria-live="polite">
-          <h2>No records match this view</h2>
-          <p>Try a longer period or reset one of the team, tool, or workflow filters.</p>
-          <button className="button-dark" type="button" onClick={() => setFilters(DEFAULT_FILTERS)}>Reset filters</button>
         </section>
       ) : (
         <>
@@ -260,7 +290,14 @@ export function OverviewDashboard() {
               <table>
                 <thead><tr><th>Tool</th><th>Observed spend</th><th>Assisted PRs</th><th>Estimated net capacity</th><th>Cycle time</th></tr></thead>
                 <tbody>
-                  {toolRows.map(({ tool, summary: toolSummary }) => (
+                  {!toolBreakdownVisible ? (
+                    <tr>
+                      <td className="protected-table-cell" colSpan={5}>
+                        <ShieldCheck size={13} aria-hidden="true" />
+                        The entire tool breakdown is hidden because at least one non-empty tool cohort is below {minimumCohort} people. Whole-breakdown suppression prevents subtraction from revealing protected values.
+                      </td>
+                    </tr>
+                  ) : toolRows.map(({ tool, summary: toolSummary }) => (
                     <tr key={tool}>
                       <th scope="row"><span className={`tool-dot tool-${tool.toLowerCase().replaceAll(' ', '-')}`} />{tool}</th>
                       <td>{money(toolSummary.spend)}</td>

@@ -436,6 +436,8 @@ tbody th { font-weight: 680; }
 .tool-copilot { background: #53605a; }
 .positive-cell { color: #247049; font-weight: 680; }
 .negative-cell { color: #a4493f; }
+.protected-table-cell { color: #747d76; font-size: 9px; }
+.protected-table-cell svg { margin: 0 6px -2px 0; color: var(--cobalt); }
 .opportunity-list-section { padding-top: 20px; }
 .section-heading-inline { display: flex; justify-content: space-between; align-items: flex-end; gap: 20px; }
 .section-heading-inline h2 { margin: 7px 0 0; font-size: 27px; letter-spacing: -.05em; }
